@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#173b35">
+<meta name="description" content="Coffee shop inventory and stock management">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Beanstock — Coffee Shop Inventory</title>
+<style>
+:root{--ink:#182c28;--muted:#71807b;--bg:#f5f5f0;--card:#fff;--green:#174c40;--green2:#dcebe3;--gold:#e6b75b;--red:#b84237;--line:#e6e9e3;--shadow:0 8px 24px #18352b0c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:20px 22px 90px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:23px}.brand h1{font-size:20px;margin:0;letter-spacing:-.5px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.status{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:8px 11px;border-radius:30px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#d69b37}
+nav{display:flex;gap:7px;overflow:auto;padding:5px;background:#e9ece6;border-radius:14px;margin-bottom:22px}nav button{border:0;background:transparent;color:#64716b;padding:10px 14px;border-radius:10px;white-space:nowrap;font-weight:600;font-size:13px}nav button.active{background:#fff;color:var(--green);box-shadow:0 2px 8px #173b3510}
+h2{font-size:24px;letter-spacing:-.7px;margin:0 0 5px}.sub{color:var(--muted);margin:0 0 20px;font-size:13px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}.stat,.panel,.product-card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.stat{padding:17px}.stat .label{font-size:12px;color:var(--muted)}.stat .num{font-size:27px;font-weight:750;letter-spacing:-1px;margin-top:5px}.stat .hint{font-size:11px;color:var(--muted);margin-top:2px}.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:15px}.panel{padding:18px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.panel h3{font-size:15px;margin:0}.muted{color:var(--muted)}.small{font-size:12px}
+.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--green);color:white;font-weight:650;font-size:13px}.btn.secondary{background:#edf2ee;color:var(--green)}.btn.outline{background:#fff;border:1px solid var(--line);color:var(--ink)}.btn.danger{background:#f9e9e7;color:var(--red)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.alert{padding:11px 12px;border-radius:11px;background:#fff5e4;border:1px solid #f3dfb8;margin-bottom:9px}.alert strong{display:block;font-size:13px}.alert span{font-size:12px;color:#806331}.empty{padding:25px 12px;text-align:center;color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px}.field label{font-size:12px;color:var(--muted);font-weight:600}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);outline-color:var(--green)}.search{max-width:290px}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:650;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:12px 8px;border-bottom:1px solid #eff1ed;font-size:13px}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:30px;padding:4px 8px;font-size:10px;font-weight:700}.pill.ok{background:#e4f2e9;color:#267047}.pill.low{background:#fff1d9;color:#94621a}.pill.out{background:#f9e5e3;color:#a63b32}
+.actions{display:flex;gap:5px}.iconbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;color:var(--green)}
+.modal-back{position:fixed;inset:0;background:#12231fc0;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.modal-back.show{display:flex}.modal{width:min(470px,100%);background:#fff;border-radius:18px;padding:21px;max-height:90vh;overflow:auto}.modal h3{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.formgrid .wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.section{display:none}.section.active{display:block}.notice{background:#eef4f0;border:1px solid #d8e7dd;padding:13px;border-radius:12px;font-size:12px;color:#315448;margin:12px 0}.warning{background:#fff5e4;border-color:#f3dfb8;color:#78571f}.footer{color:var(--muted);font-size:11px;text-align:center;margin-top:24px}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.app{padding:16px 14px 80px}.brand h1{font-size:18px}}
+@media(max-width:480px){.status{font-size:0}.status .dot{margin:0}.stats{gap:8px}.stat{padding:13px}.stat .num{font-size:23px}.panel{padding:14px}.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}table{min-width:620px}.table-wrap{overflow:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">☕</div><div><h1>Beanstock</h1><p>Coffee shop inventory</p></div></div>
+  <div class="status" title="Yoco integration is not connected yet"><span class="dot"></span> Yoco not connected</div>
+</header>
+<nav aria-label="Main navigation">
+  <button class="active" data-tab="dashboard">Overview</button><button data-tab="inventory">Inventory</button><button data-tab="sales">Record sale</button><button data-tab="stock">Receive stock</button><button data-tab="reports">Reports & data</button><button data-tab="settings">Settings</button>
+</nav>
+
+<section id="dashboard" class="section active">
+  <h2>Good day 👋</h2><p class="sub">Here’s what’s happening with your stock.</p>
+  <div class="stats">
+    <div class="stat"><div class="label">Products listed</div><div class="num" id="statProducts">0</div><div class="hint">Across all categories</div></div>
+    <div class="stat"><div class="label">Units in stock</div><div class="num" id="statUnits">0</div><div class="hint">Current recorded quantity</div></div>
+    <div class="stat"><div class="label">Low-stock items</div><div class="num" id="statLow">0</div><div class="hint">At or below minimum</div></div>
+    <div class="stat"><div class="label">Out of stock</div><div class="num" id="statOut">0</div><div class="hint">Need replenishment</div></div>
+  </div>
+  <div class="layout">
+    <div class="panel"><div class="panel-head"><h3>Stock needing attention</h3><button class="btn secondary" onclick="showTab('inventory')">View inventory</button></div><div id="dashboardAlerts"></div></div>
+    <div class="panel"><div class="panel-head"><h3>Recent stock activity</h3><span class="small muted">Latest 6</span></div><div id="recentActivity"></div></div>
+  </div>
+  <div class="notice warning"><strong>Yoco connection pending.</strong> This starter app does not yet receive sales from your Yoco POS. Product-based sales can be automated only after we confirm and configure an authorised Yoco POS integration. Manual-amount sales need product quantities identified before stock can be deducted.</div>
+</section>
+
+<section id="inventory" class="section">
+  <h2>Inventory</h2><p class="sub">Manage finished, ready-to-sell products and their stock levels.</p>
+  <div class="toolbar"><input class="field search" id="searchProducts" placeholder="Search products…" oninput="renderInventory()"><select class="field" id="filterCategory" onchange="renderInventory()"><option value="">All categories</option><option>Coffee & beverages</option><option>Sweet food</option><option>Savoury food</option><option>Other</option></select><button class="btn" onclick="openProductModal()">+ Add product</button></div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>In stock</th><th>Minimum</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody id="inventoryRows"></tbody></table></div><div class="empty" id="inventoryEmpty">No products yet. Add your first product to get started.</div></div>
+</section>
+
+<section id="sales" class="section">
+  <h2>Record a sale</h2><p class="sub">Use this for manual Yoco amount sales or to correct a missed POS sync. Product-linked Yoco sales should eventually import automatically.</p>
+  <div class="panel">
+    <div class="formgrid">
+      <div class="field wide"><label>Product sold</label><select id="saleProduct"></select></div>
+      <div class="field"><label>Quantity sold</label><input id="saleQty" type="number" min="1" step="1" value="1"></div>
+      <div class="field"><label>Sale reference (optional)</label><input id="saleRef" placeholder="Receipt / transaction ref"></div>
+      <div class="field wide"><label>Note (optional)</label><input id="saleNote" placeholder="e.g. Manual Yoco amount sale"></div>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="recordSale()">Record sale & deduct stock</button></div>
+  </div>
+  <div class="notice">A payment amount by itself does not identify which products were sold. Select each product and quantity from the receipt before recording a manual-amount sale.</div>
+</section>
+
+<section id="stock" class="section">
+  <h2>Receive stock</h2><p class="sub">Record deliveries and increase the quantity on hand.</p>
+  <div class="panel">
+    <div class="formgrid">
+      <div class="field wide"><label>Product received</label><select id="receiveProduct"></select></div>
+      <div class="field"><label>Quantity received</label><input id="receiveQty" type="number" min="1" step="1" value="1"></div>
+      <div class="field"><label>Supplier (optional)</label><input id="supplier" placeholder="Supplier name"></div>
+      <div class="field"><label>Expiry date (optional)</label><input id="expiry" type="date"></div>
+      <div class="field"><label>Delivery reference (optional)</label><input id="deliveryRef" placeholder="Invoice / reference"></div>
+    </div>
+    <div class="modal-actions"><button class="btn" onclick="receiveStock()">Save delivery</button></div>
+  </div>
+</section>
+
+<section id="reports" class="section">
+  <h2>Reports & data</h2><p class="sub">Review recorded stock movements and keep a backup of your information.</p>
+  <div class="stats">
+    <div class="stat"><div class="label">Sales recorded</div><div class="num" id="reportSales">0</div><div class="hint">Transactions in this app</div></div>
+    <div class="stat"><div class="label">Units sold</div><div class="num" id="reportUnitsSold">0</div><div class="hint">Recorded quantities</div></div>
+    <div class="stat"><div class="label">Units received</div><div class="num" id="reportReceived">0</div><div class="hint">Recorded deliveries</div></div>
+    <div class="stat"><div class="label">Stock adjustments</div><div class="num" id="reportAdjustments">0</div><div class="hint">Manual corrections</div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><h3>Recent movements</h3><button class="btn secondary" onclick="exportMovements()">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Product</th><th>Quantity</th><th>Reference / note</th></tr></thead><tbody id="movementRows"></tbody></table></div><div class="empty" id="movementEmpty">No movements recorded yet.</div></div>
+  <div class="panel" style="margin-top:14px"><h3>Backup & restore</h3><p class="small muted">Export a full JSON backup regularly. This starter version stores data in this browser on this device; it does not yet synchronise between your iPhone and computer.</p><div class="toolbar" style="margin-top:12px"><button class="btn" onclick="backupData()">Download full backup</button><label class="btn secondary" for="restoreFile">Restore backup</label><input id="restoreFile" type="file" accept="application/json" hidden onchange="restoreData(event)"></div></div>
+</section>
+
+<section id="settings" class="section">
+  <h2>Settings</h2><p class="sub">Configure your stock alerts and integration readiness.</p>
+  <div class="panel">
+    <h3>Low-stock alerts</h3><p class="small muted">The app highlights products when stock reaches or falls below their minimum quantity.</p>
+    <div class="notice">Browser notifications may require permission and an installed PWA. Reliable background push notifications need a secure server and push-notification service, which will be added in a later stage.</div>
+    <button class="btn secondary" onclick="enableNotifications()">Enable browser notifications</button><span id="notificationStatus" class="small muted" style="margin-left:10px"></span>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>Yoco POS connection</h3><p class="small muted">Connection status: <strong>Not connected</strong></p>
+    <p class="small">The Yoco credentials and an approved POS sales-data integration are not configured. Do not enter or share your Yoco password or API secrets in this demo app.</p>
+    <div class="notice warning">Before enabling automatic deductions, we must verify that Yoco makes your POS App's individual product sales available to an authorised third-party integration, including refunds and voids.</div>
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Business name</h3><div class="field" style="max-width:380px;margin-top:10px"><label>Display name</label><input id="businessName" placeholder="Your coffee shop name" onchange="saveBusinessName()"></div></div>
+</section>
+
+<div class="footer">Beanstock starter · Inventory data is stored locally on this device · Back up regularly</div>
+</div>
+
+<div class="modal-back" id="productModal"><div class="modal"><h3 id="productModalTitle">Add product</h3>
+  <div class="formgrid">
+    <div class="field wide"><label>Product name *</label><input id="pName" placeholder="e.g. Cappuccino"></div>
+    <div class="field"><label>Category</label><select id="pCategory"><option>Coffee & beverages</option><option>Sweet food</option><option>Savoury food</option><option>Other</option></select></div>
+    <div class="field"><label>Current quantity</label><input id="pQty" type="number" min="0" step="1" value="0"></div>
+    <div class="field"><label>Minimum stock level</label><input id="pMin" type="number" min="0" step="1" value="5"></div>
+    <div class="field"><label>Selling price (R)</label><input id="pPrice" type="number" min="0" step=".01" placeholder="0.00"></div>
+    <div class="field"><label>Purchase cost (R, optional)</label><input id="pCost" type="number" min="0" step=".01" placeholder="0.00"></div>
+    <div class="field wide"><label>Supplier (optional)</label><input id="pSupplier" placeholder="Supplier name"></div>
+  </div>
+  <div class="modal-actions"><button class="btn outline" onclick="closeProductModal()">Cancel</button><button class="btn" onclick="saveProduct()">Save product</button></div>
+</div></div>
+<script>
+const KEY='beanstock_inventory_v1';
+let state=loadState(), editingId=null;
+function loadState(){try{return JSON.parse(localStorage.getItem(KEY))||{products:[],movements:[],businessName:''}}catch(e){return {products:[],movements:[],businessName:''}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function uid(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function status(p){return p.qty<=0?'out':p.qty<=p.min?'low':'ok'}
+function showTab(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(id==='inventory')renderInventory();if(id==='reports')renderReports();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function renderAll(){renderDashboard();renderInventory();renderSelects();renderReports();document.getElementById('businessName').value=state.businessName||''}
+function renderDashboard(){
+ const ps=state.products;document.getElementById('statProducts').textContent=ps.length;document.getElementById('statUnits').textContent=ps.reduce((a,p)=>a+p.qty,0);document.getElementById('statLow').textContent=ps.filter(p=>p.qty>0&&p.qty<=p.min).length;document.getElementById('statOut').textContent=ps.filter(p=>p.qty<=0).length;
+ const alerts=ps.filter(p=>p.qty<=p.min).sort((a,b)=>a.qty-b.qty);document.getElementById('dashboardAlerts').innerHTML=alerts.length?alerts.map(p=>`<div class="alert"><strong>${esc(p.name)} — ${p.qty<=0?'OUT OF STOCK':'Low stock'}</strong><span>${p.qty} remaining · Minimum ${p.min}</span></div>`).join(''):'<div class="empty">All products are above their minimum stock levels.</div>';
+ const recent=state.movements.slice().reverse().slice(0,6);document.getElementById('recentActivity').innerHTML=recent.length?recent.map(m=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)"><div><strong style="font-size:12px">${esc(m.productName)}</strong><div class="small muted">${esc(m.type)} · ${new Date(m.date).toLocaleString()}</div></div><strong style="font-size:13px">${m.delta>0?'+':''}${m.delta}</strong></div>`).join(''):'<div class="empty">No stock activity yet.</div>';
+}
+function renderInventory(){
+ const q=(document.getElementById('searchProducts')?.value||'').toLowerCase(),cat=document.getElementById('filterCategory')?.value||'';
+ const rows=state.products.filter(p=>(p.name.toLowerCase().includes(q))&&(!cat||p.category===cat));
+ document.getElementById('inventoryRows').innerHTML=rows.map(p=>{let s=status(p);return `<tr><td><strong>${esc(p.name)}</strong></td><td>${esc(p.category)}</td><td><strong>${p.qty}</strong></td><td>${p.min}</td><td>${p.price==null?'—':'R'+Number(p.price).toFixed(2)}</td><td><span class="pill ${s}">${s==='ok'?'In stock':s==='low'?'Low stock':'Out of stock'}</span></td><td><div class="actions"><button class="iconbtn" title="Edit" onclick="editProduct('${p.id}')">Edit</button><button class="iconbtn" title="Delete" onclick="deleteProduct('${p.id}')">×</button></div></td></tr>`}).join('');
+ document.getElementById('inventoryEmpty').style.display=rows.length?'none':'block';
+}
+function renderSelects(){['saleProduct','receiveProduct'].forEach(id=>{let el=document.getElementById(id),old=el.value;el.innerHTML=state.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${p.qty} in stock)</option>`).join('');if(old&&state.products.some(p=>p.id===old))el.value=old;if(!state.products.length)el.innerHTML='<option value="">Add products first</option>'})}
+function openProductModal(){editingId=null;document.getElementById('productModalTitle').textContent='Add product';['pName','pPrice','pCost','pSupplier'].forEach(id=>document.getElementById(id).value='');document.getElementById('pQty').value=0;document.getElementById('pMin').value=5;document.getElementById('productModal').classList.add('show')}
+function closeProductModal(){document.getElementById('productModal').classList.remove('show')}
+function editProduct(id){let p=state.products.find(x=>x.id===id);if(!p)return;editingId=id;document.getElementById('productModalTitle').textContent='Edit product';document.getElementById('pName').value=p.name;document.getElementById('pCategory').value=p.category;document.getElementById('pQty').value=p.qty;document.getElementById('pMin').value=p.min;document.getElementById('pPrice').value=p.price??'';document.getElementById('pCost').value=p.cost??'';document.getElementById('pSupplier').value=p.supplier||'';document.getElementById('productModal').classList.add('show')}
+function saveProduct(){let name=document.getElementById('pName').value.trim();let qty=Number(document.getElementById('pQty').value),min=Number(document.getElementById('pMin').value);if(!name||!Number.isInteger(qty)||qty<0||!Number.isInteger(min)||min<0){alert('Enter a product name and valid whole-number stock quantities.');return}
+ let p={id:editingId||uid(),name,category:document.getElementById('pCategory').value,qty,min,price:document.getElementById('pPrice').value===''?null:Number(document.getElementById('pPrice').value),cost:document.getElementById('pCost').value===''?null:Number(document.getElementById('pCost').value),supplier:document.getElementById('pSupplier').value.trim()};
+ if(editingId){let old=state.products.find(x=>x.id===editingId);let diff=qty-old.qty;if(diff)movement(p,diff,'Adjustment','Product edited');state.products=state.products.map(x=>x.id===editingId?p:x)}else{state.products.push(p);if(qty)movement(p,qty,'Opening stock','Initial quantity')}
+ closeProductModal();save();notifyIfLow(p)
+}
+function deleteProduct(id){let p=state.products.find(x=>x.id===id);if(!p||!confirm(`Delete ${p.name}? Its historical movements will remain.`))return;state.products=state.products.filter(x=>x.id!==id);save()}
+function movement(p,delta,type,note=''){state.movements.push({id:uid(),date:new Date().toISOString(),productId:p.id,productName:p.name,delta,type,note})}
+function recordSale(){let id=document.getElementById('saleProduct').value,p=state.products.find(x=>x.id===id),qty=Number(document.getElementById('saleQty').value);if(!p||!Number.isInteger(qty)||qty<1){alert('Choose a product and enter a valid quantity.');return}if(qty>p.qty&&!confirm(`Only ${p.qty} in stock. Record the sale anyway? This will create negative stock.`))return;p.qty-=qty;movement(p,-qty,'Sale',`${document.getElementById('saleRef').value} ${document.getElementById('saleNote').value}`.trim());document.getElementById('saleQty').value=1;document.getElementById('saleRef').value='';document.getElementById('saleNote').value='';save();notifyIfLow(p);alert('Sale recorded and stock updated.')}
+function receiveStock(){let id=document.getElementById('receiveProduct').value,p=state.products.find(x=>x.id===id),qty=Number(document.getElementById('receiveQty').value);if(!p||!Number.isInteger(qty)||qty<1){alert('Choose a product and enter a valid quantity.');return}p.qty+=qty;let note=[document.getElementById('supplier').value,document.getElementById('expiry').value?'Expiry '+document.getElementById('expiry').value:'',document.getElementById('deliveryRef').value].filter(Boolean).join(' · ');movement(p,qty,'Delivery',note);save();document.getElementById('receiveQty').value=1;document.getElementById('supplier').value='';document.getElementById('expiry').value='';document.getElementById('deliveryRef').value='';alert('Delivery saved and stock increased.')}
+function renderReports(){let ms=state.movements;document.getElementById('reportSales').textContent=ms.filter(m=>m.type==='Sale').length;document.getElementById('reportUnitsSold').textContent=-ms.filter(m=>m.type==='Sale').reduce((a,m)=>a+m.delta,0);document.getElementById('reportReceived').textContent=ms.filter(m=>m.type==='Delivery').reduce((a,m)=>a+m.delta,0);document.getElementById('reportAdjustments').textContent=ms.filter(m=>m.type==='Adjustment').length;let rows=ms.slice().reverse();document.getElementById('movementRows').innerHTML=rows.map(m=>`<tr><td>${new Date(m.date).toLocaleString()}</td><td>${esc(m.type)}</td><td>${esc(m.productName)}</td><td>${m.delta>0?'+':''}${m.delta}</td><td>${esc(m.note)}</td></tr>`).join('');document.getElementById('movementEmpty').style.display=rows.length?'none':'block'}
+function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function exportMovements(){let lines=[['Date','Type','Product','Quantity change','Note'],...state.movements.map(m=>[m.date,m.type,m.productName,m.delta,m.note])];download('beanstock-movements.csv',lines.map(r=>r.map(csvCell).join(',')).join('\n'),'text/csv')}
+function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+function backupData(){download('beanstock-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(state,null,2),'application/json')}
+function restoreData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.products)||!Array.isArray(d.movements))throw Error();if(!confirm('Replace the current data with this backup?'))return;state=d;save();alert('Backup restored.')}catch(err){alert('That file is not a valid Beanstock backup.')}};r.readAsText(f);e.target.value=''}
+function enableNotifications(){if(!('Notification'in window)){document.getElementById('notificationStatus').textContent='Notifications not supported in this browser.';return}Notification.requestPermission().then(p=>document.getElementById('notificationStatus').textContent=p==='granted'?'Browser notifications enabled.':'Permission not granted.')}
+function notifyIfLow(p){if(p.qty<=p.min&&'Notification'in window&&Notification.permission==='granted'){new Notification(p.qty<=0?'Out of stock: '+p.name:'Low stock: '+p.name,{body:`${p.qty} remaining. Minimum level: ${p.min}.`})}}
+function saveBusinessName(){state.businessName=document.getElementById('businessName').value.trim();localStorage.setItem(KEY,JSON.stringify(state))}
+renderAll();
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
